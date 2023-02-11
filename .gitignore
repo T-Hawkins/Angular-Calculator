@@ -4,17 +4,19 @@
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
 # Angular
+**/.angular
 **/.angular/*
 **/.angular/cache
 
 # User specific
+.idea
+**/.idea/*
+
 **/.idea/**/workspace.xml
 **/.idea/**/tasks.xml
 **/.idea/shelf/*
 **/.idea/dictionaries
 **/.idea/httpRequests/
-
-**/.idea/*
 
 # Sensitive or high-churn files
 **/.idea/**/dataSources/
