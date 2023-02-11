@@ -8,76 +8,94 @@
             <th scope="col">Calculation</th>
           </thead>
           <tbody>
-            <tr *ngFor="let event of history">
-              <td>{{event.id}}</td>
-              <td>{{event.equation}}</td>
+            <tr *ngFor="let equation of equationHistory"
+                (mouseover)="handleMouseOver(equation)"
+                (mouseleave)="handleMouseLeave(equation)">
+              <td class="col-3">{{equation.id}}</td>
+              <td class="col-3">{{equation.equation}}</td>
+              <td class="col-2">
+                <button [hidden]="!equation.mouseOn"
+                        (click)="resubmitEvent(equation)"
+                        class="btn btn-primary">Resubmit</button>
+              </td>
             </tr>
           </tbody>
         </table>
       </div>
 
-      <div class="col-8">
+      <div class="col-7 offset-1">
         <div class="row pb-5">
-          <h3>Result</h3>
-          <input class="form-control form-control-lg"
-                 type="text"
-                 placeholder="The result will go here"
-                 aria-label=".form-control-lg example"
-                 value="{{equationResult}}"
-                 disabled>
+          <div class="form-group col-7">
+            <label for="equationInput">Result</label>
+            <input class="form-control form-control-lg"
+                   type="text"
+                   aria-label=".form-control-lg example"
+                   value="{{equationResult}}"
+                   disabled>
+          </div>
         </div>
         <div class="row pb-4">
-          <form (ngSubmit)="onSubmit(); equationInputForm.resetForm({})" [formGroup]="inputForm" #equationInputForm="ngForm">
-            <div class="form-group">
-              <label for="equationInput">Input</label>
-              <input class="form-control col-4"
-                     type="text"
-                     id="equationInput"
-                     required
-                     formControlName="equation"
-                     name="equationInput"
-                     placeholder="Please enter equation">
-              <div [hidden]="equation.valid" class="alert alert-danger">Equation is invalid</div>
-              <div class="field-message" *ngIf="equation.errors?.unbalancedEquation">Your equation may only contain one operator</div>
+          <form [formGroup]="inputForm" #equationInputForm="ngForm">
+            <div class="row">
+              <div class="form-group col-7">
+                <label for="equationInput">Input</label>
+                <input class="form-control col-3"
+                       type="text"
+                       id="equationInput"
+                       formControlName="equation"
+                       name="equationInput"
+                       placeholder="Please enter equation"
+                       required>
+
+              </div>
+              <div class="col-1 pt-5 pm-5" [hidden]="equation.valid">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="red" class="bi bi-x-lg" viewBox="0 0 16 16">
+                  <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z"/>
+                </svg>
+              </div>
+              <div class="col-1 pt-5 pm-5" [hidden]="!equation.valid">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="green" class="bi bi-check-lg" viewBox="0 0 16 16">
+                  <path d="M12.736 3.97a.733.733 0 0 1 1.047 0c.286.289.29.756.01 1.05L7.88 12.01a.733.733 0 0 1-1.065.02L3.217 8.384a.757.757 0 0 1 0-1.06.733.733 0 0 1 1.047 0l3.052 3.093 5.4-6.425a.247.247 0 0 1 .02-.022Z"/>
+                </svg>
+              </div>
             </div>
-
-            <button type="submit"
-                    class="btn btn-primary"
-                    [disabled]="inputForm.invalid">Submit</button>
-            <button type="button" class="btn btn-default"
-                    (click)="equationInputForm.reset({})">Reset</button>
+            <div class="container pt-4">
+              <h4>Calculator Input</h4>
+              <div class="row">
+                <button class="btn btn-light btn-outline-secondary col-2" (click)="addValue('1')">1</button>
+                <button class="btn btn-light btn-outline-secondary col-2" (click)="addValue('2')">2</button>
+                <button class="btn btn-light btn-outline-secondary col-2" (click)="addValue('3')">3</button>
+                <button class="btn btn-light btn-outline-secondary col-2" (click)="addValue('*')">*</button>
+              </div>
+              <div class="row">
+                <button class="btn btn-light btn-outline-secondary col-2" (click)="addValue('4')">4</button>
+                <button class="btn btn-light btn-outline-secondary col-2" (click)="addValue('5')">5</button>
+                <button class="btn btn-light btn-outline-secondary col-2" (click)="addValue('6')">6</button>
+                <button class="btn btn-light btn-outline-secondary col-2" (click)="addValue('/')">/</button>
+              </div>
+              <div class="row">
+                <button class="btn btn-light btn-outline-secondary col-2" (click)="addValue('7')">7</button>
+                <button class="btn btn-light btn-outline-secondary col-2" (click)="addValue('8')">8</button>
+                <button class="btn btn-light btn-outline-secondary col-2" (click)="addValue('9')">9</button>
+                <button class="btn btn-light btn-outline-secondary col-2" (click)="addValue('+')">+</button>
+              </div>
+              <div class="row">
+                <button class="btn btn-light btn-outline-secondary col-2 offset-2" (click)="addValue('0')">0</button>
+                <button class="btn btn-light btn-outline-secondary col-2" (click)="addValue('.')">.</button>
+                <button class="btn btn-light btn-outline-secondary col-2" (click)="addValue('-')">-</button>
+              </div>
+            </div>
+            <div class="row pt-5">
+              <button type="submit"
+                      class="btn btn-primary col-2"
+                      [disabled]="inputForm.invalid"
+                      (click)="onSubmit(); equationInputForm.resetForm({equation: ''})">Submit</button>
+              <button type="button" class="btn btn-warning col-2 offset-2"
+                      (click)="removeLastCharacter()">Delete</button>
+              <button type="button" class="btn btn-danger col-2"
+                      (click)="equationInputForm.resetForm({equation: ''})">Reset</button>
+            </div>
           </form>
-        </div>
-        <div class="container pt-4">
-          <h4>Calculator Input</h4>
-          <div class="row">
-            <button class="btn btn-light btn-outline-secondary col-2" (click)="addValue('1')">1</button>
-            <button class="btn btn-light btn-outline-secondary col-2" (click)="addValue('2')">2</button>
-            <button class="btn btn-light btn-outline-secondary col-2" (click)="addValue('3')">3</button>
-            <button class="btn btn-light btn-outline-secondary col-2" (click)="addValue('*')">*</button>
-          </div>
-          <div class="row">
-            <button class="btn btn-light btn-outline-secondary col-2" (click)="addValue('4')">4</button>
-            <button class="btn btn-light btn-outline-secondary col-2" (click)="addValue('5')">5</button>
-            <button class="btn btn-light btn-outline-secondary col-2" (click)="addValue('6')">6</button>
-            <button class="btn btn-light btn-outline-secondary col-2" (click)="addValue('/')">/</button>
-          </div>
-          <div class="row">
-            <button class="btn btn-light btn-outline-secondary col-2" (click)="addValue('7')">7</button>
-            <button class="btn btn-light btn-outline-secondary col-2" (click)="addValue('8')">8</button>
-            <button class="btn btn-light btn-outline-secondary col-2" (click)="addValue('9')">9</button>
-            <button class="btn btn-light btn-outline-secondary col-2" (click)="addValue('+')">+</button>
-          </div>
-          <div class="row">
-<!--            <button disabled class="btn btn-default col-3"></button>-->
-            <button class="btn btn-light btn-outline-secondary col-2 offset-2" (click)="addValue('0')">0</button>
-            <button class="btn btn-light btn-outline-secondary col-2" (click)="addValue('.')">.</button>
-            <button class="btn btn-light btn-outline-secondary col-2" (click)="addValue('-')">-</button>
-          </div>
-        </div>
-
-        <div class="submitted-message" *ngIf="equationInputForm.submitted">
-          <p>You've submitted your equation, {{ inputForm.value.equation }}!</p>
         </div>
       </div>
     </div>

@@ -1,8 +1,7 @@
 import {Component, Inject, OnInit} from '@angular/core';
 import { FormControl, FormGroup, Validators} from "@angular/forms";
 import {HttpClient} from "@angular/common/http";
-import {ensureEquationHasAnOperator} from "./Validators/OperatorValidator";
-import {ensureEquationIsBalanced} from "./Validators/EquationBalanceOperator";
+import {ensureEquationHasOnlyValidCharacters} from "./Validators/EquationFormatValidator";
 
 @Component({
   selector: 'app-calculator',
@@ -11,10 +10,7 @@ import {ensureEquationIsBalanced} from "./Validators/EquationBalanceOperator";
 })
 export class CalculatorComponent implements OnInit {
 
-  equationInput:string = ""; // initialize with an empty input
-  equationRaw:string = ""; // initialize with an empty input
-
-  history: EquationDto[] = [];
+  equationHistory: EquationDto[] = [];
   public inputForm!: FormGroup;
   public equationResult: number = 0;
 
@@ -37,17 +33,13 @@ export class CalculatorComponent implements OnInit {
     this.http.get<EquationDto[]>(this.baseUrl + 'calculator')
       .subscribe(equations => {
           equations.forEach(val => {
-            this.history.push(val)
+            this.equationHistory.push(val)
           })
         })
 
     this.inputForm = new FormGroup({
       equation: new FormControl('', [
-        Validators.required,
-        ensureEquationHasAnOperator(),
-        ensureEquationIsBalanced()
-        // Validators.minLength(4),
-        // Validators.maxLength(10)
+        ensureEquationHasOnlyValidCharacters()
       ]),
     });
   }
@@ -59,21 +51,24 @@ export class CalculatorComponent implements OnInit {
   }
 
   onSubmit(): void {
-    this.history.push({id: this.history.length, equation: this.inputForm.value.equation})
-    this.processEquationAndAssignToResult();
+    this.equationHistory.push({id: this.equationHistory.length, equation: this.inputForm.value.equation, mouseOn: false})
+    this.processEquationAndAssignToResult(this.inputForm.value.equation);
     this.inputForm.reset()
   }
 
-  processEquationAndAssignToResult(): void {
-    const rawEquation: string = this.inputForm.value.equation;
+  resubmitEvent(equation: EquationDto) : void {
+    this.processEquationAndAssignToResult(equation.equation);
+    this.inputForm.reset()
+  }
 
+  processEquationAndAssignToResult(rawEquation: string): void {
     // TODO: add step to modify equation when requesting previous result
 
-    const workingEquation: string = rawEquation.replace(' ', '')
-      .replace('/', ' / ')
-      .replace('*', ' * ')
-      .replace('+', ' + ')
-      .replace('-', ' - ');
+    let workingEquation: string = rawEquation.replaceAll(' ', '')
+      .replaceAll('/', ' / ')
+      .replaceAll('*', ' * ')
+      .replaceAll('+', ' + ')
+      .replaceAll('-', ' - ');
 
     const equationParts: string[] = workingEquation.split(' ');
     const left: number = parseFloat(equationParts[0])
@@ -95,9 +90,22 @@ export class CalculatorComponent implements OnInit {
     }
     this.equationResult = result;
   }
+
+  handleMouseOver(equation: EquationDto) : void {
+    equation.mouseOn = true;
+  }
+  handleMouseLeave(equation: EquationDto) : void {
+    equation.mouseOn = false;
+  }
+
+  removeLastCharacter() : void {
+    const equation: string = this.inputForm.value.equation;
+    this.inputForm.setValue({equation: equation.substring(0, equation.length - 1)})
+  }
 }
 
 interface EquationDto {
   id: number
   equation: string
+  mouseOn: boolean
 }
