@@ -1,0 +1,80 @@
+<div class="container-fluid">
+  <div class="form">
+    <div class="row">
+      <div class="col-4">
+        <table class="table table-striped">
+          <thead>
+            <th scope="col">Event Number</th>
+            <th scope="col">Calculation</th>
+          </thead>
+          <tbody>
+            <tr *ngFor="let event of history">
+              <td>{{event.id}}</td>
+              <td>{{event.equation}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="col-8">
+        <div class="row pb-5">
+          <h3>Result</h3>
+        </div>
+        <div class="row pb-4">
+          <form (ngSubmit)="onSubmit()" [formGroup]="inputForm" #equationInputForm="ngForm">
+            <div class="form-group">
+              <label for="equationInput">Input</label>
+              <input class="form-control col-4"
+                     type="text"
+                     id="equationInput"
+                     required
+                     formControlName="equation"
+                     name="equationInput"
+                     placeholder="Please enter equation">
+              <div [hidden]="equation.valid" class="alert alert-danger">Equation is invalid</div>
+              <div class="field-message" *ngIf="equation.errors?.unbalancedEquation">Your equation may only contain one operator</div>
+            </div>
+
+            <button type="submit"
+                    class="btn btn-primary"
+                    [disabled]="inputForm.invalid">Submit</button>
+            <button type="button" class="btn btn-default"
+                    (click)="equationInputForm.reset({})">Reset</button>
+          </form>
+        </div>
+        <div class="container pt-4">
+          <h4>Calculator Input</h4>
+          <div class="row">
+            <button class="btn btn-light btn-outline-secondary col-2" (click)="addValue('1')">1</button>
+            <button class="btn btn-light btn-outline-secondary col-2" (click)="addValue('2')">2</button>
+            <button class="btn btn-light btn-outline-secondary col-2" (click)="addValue('3')">3</button>
+            <button class="btn btn-light btn-outline-secondary col-2" (click)="addValue('*')">*</button>
+          </div>
+          <div class="row">
+            <button class="btn btn-light btn-outline-secondary col-2" (click)="addValue('4')">4</button>
+            <button class="btn btn-light btn-outline-secondary col-2" (click)="addValue('5')">5</button>
+            <button class="btn btn-light btn-outline-secondary col-2" (click)="addValue('6')">6</button>
+            <button class="btn btn-light btn-outline-secondary col-2" (click)="addValue('/')">/</button>
+          </div>
+          <div class="row">
+            <button class="btn btn-light btn-outline-secondary col-2" (click)="addValue('7')">7</button>
+            <button class="btn btn-light btn-outline-secondary col-2" (click)="addValue('8')">8</button>
+            <button class="btn btn-light btn-outline-secondary col-2" (click)="addValue('9')">9</button>
+            <button class="btn btn-light btn-outline-secondary col-2" (click)="addValue('+')">+</button>
+          </div>
+          <div class="row">
+<!--            <button disabled class="btn btn-default col-3"></button>-->
+            <button class="btn btn-light btn-outline-secondary col-2 offset-2" (click)="addValue('0')">0</button>
+            <button class="btn btn-light btn-outline-secondary col-2" (click)="addValue('.')">.</button>
+            <button class="btn btn-light btn-outline-secondary col-2" (click)="addValue('-')">-</button>
+          </div>
+        </div>
+
+        <div class="submitted-message" *ngIf="equationInputForm.submitted">
+          <p>You've submitted your equation, {{ inputForm.value.equation }}!</p>
+          <button type="button" (click)="equationInputForm.resetForm({})">Submit another</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

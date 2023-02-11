@@ -5,6 +5,7 @@
 
 # Angular
 **/.angular/*
+**/.angular/cache
 
 # User specific
 **/.idea/**/workspace.xml
