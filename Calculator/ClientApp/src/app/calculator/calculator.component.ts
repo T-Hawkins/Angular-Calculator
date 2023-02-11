@@ -13,8 +13,10 @@ export class CalculatorComponent implements OnInit {
 
   equationInput:string = ""; // initialize with an empty input
   equationRaw:string = ""; // initialize with an empty input
+
   history: EquationDto[] = [];
   public inputForm!: FormGroup;
+  public equationResult: number = 0;
 
   private baseUrl: string;
   private http: HttpClient;
@@ -58,7 +60,40 @@ export class CalculatorComponent implements OnInit {
 
   onSubmit(): void {
     this.history.push({id: this.history.length, equation: this.inputForm.value.equation})
+    this.processEquationAndAssignToResult();
     this.inputForm.reset()
+  }
+
+  processEquationAndAssignToResult(): void {
+    const rawEquation: string = this.inputForm.value.equation;
+
+    // TODO: add step to modify equation when requesting previous result
+
+    const workingEquation: string = rawEquation.replace(' ', '')
+      .replace('/', ' / ')
+      .replace('*', ' * ')
+      .replace('+', ' + ')
+      .replace('-', ' - ');
+
+    const equationParts: string[] = workingEquation.split(' ');
+    const left: number = parseFloat(equationParts[0])
+    const right: number = parseFloat(equationParts[2])
+    let result: number = 0;
+    switch(equationParts[1]) {
+      case '/':
+        result = left/right
+        break;
+      case '*':
+        result = left * right
+        break;
+      case '+':
+        result = left + right
+        break;
+      case '-':
+        result = left - right
+        break;
+    }
+    this.equationResult = result;
   }
 }
 

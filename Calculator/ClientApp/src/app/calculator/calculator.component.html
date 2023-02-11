@@ -19,9 +19,15 @@
       <div class="col-8">
         <div class="row pb-5">
           <h3>Result</h3>
+          <input class="form-control form-control-lg"
+                 type="text"
+                 placeholder="The result will go here"
+                 aria-label=".form-control-lg example"
+                 value="{{equationResult}}"
+                 disabled>
         </div>
         <div class="row pb-4">
-          <form (ngSubmit)="onSubmit()" [formGroup]="inputForm" #equationInputForm="ngForm">
+          <form (ngSubmit)="onSubmit(); equationInputForm.resetForm({})" [formGroup]="inputForm" #equationInputForm="ngForm">
             <div class="form-group">
               <label for="equationInput">Input</label>
               <input class="form-control col-4"
@@ -72,7 +78,6 @@
 
         <div class="submitted-message" *ngIf="equationInputForm.submitted">
           <p>You've submitted your equation, {{ inputForm.value.equation }}!</p>
-          <button type="button" (click)="equationInputForm.resetForm({})">Submit another</button>
         </div>
       </div>
     </div>
