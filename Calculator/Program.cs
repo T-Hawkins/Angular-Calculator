@@ -1,8 +1,11 @@
+using Calculator.DataAccess;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddControllersWithViews();
+builder.Services.AddScoped<CalculatorDataAccessor>();
 
 var app = builder.Build();
 

@@ -4,6 +4,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Calculator", "Calculator\Ca
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Calculator.Dtos", "Calculator.Dtos\Calculator.Dtos.csproj", "{5319BF2C-0900-4656-A6F4-3AC5C30D091B}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Assets", "Assets", "{531617AD-44D2-46A6-85D9-ADCAC5BFC22A}"
+	ProjectSection(SolutionItems) = preProject
+		CalculatorHistory.png = CalculatorHistory.png
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

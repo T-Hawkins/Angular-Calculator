@@ -1,4 +1,5 @@
-﻿using Calculator.Dtos;
+﻿using Calculator.DataAccess;
+using Calculator.Dtos;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Calculator.Controllers;
@@ -7,6 +8,13 @@ namespace Calculator.Controllers;
 [Route("[controller]")]
 public class Calculator : Controller
 {
+    private readonly CalculatorDataAccessor _dataAccessor;
+
+    public Calculator(CalculatorDataAccessor dataAccessor)
+    {
+        _dataAccessor = dataAccessor;
+    }
+    
     // GET
     [HttpGet]
     // [Route("/equations/{userId}")]
