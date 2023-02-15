@@ -17,7 +17,19 @@ These typically explain the presence or absence of features:
     expected table structure that will need to be created. This is referenced below
   * Connection managed through a connection string for simplicity
   
+## Configuration
+There are several values required for configuration and the application will not start without
+some of them.
 
+### CalculatorDataAccessOptions
+All options here should go (if in a json) within an object with the name `CalculatorDataAccessOptions`  
+
+|Key|Required|Description|Example|
+|---|---|---|---|
+|`ConnectionString`|Yes|The connection string to the database. This should connect directly to the database as required|`Server=(localdb)\MSSQLLocalDB;Initial Catalog=master;Integrated Security=True;MultipleActiveResultSets=True;Trust Server Certificate=true;Integrated Security=SSPI`|
+|`Schema`|Yes|The name of the schema that contains the target table|`dbo`|
+|`TableName`|Yes|The name of the table that will contain the information. This needs to match the table specification below|`CalculatorHistory`|
+|`MaximumConnectionRetries`|No|The maximum number of retries on a failed connection - this is only really relevant if the database is not local to the server|`1`|
 
 ## Database
 The database will need to have the table created, the main reason for this is that the 
@@ -39,12 +51,12 @@ create table calc.CalculatorHistory
 (
     SchoolId      uniqueidentifier           not null,
     UserId        int                        not null,
-    Equation      int                        not null,
-    EquationValue int                        not null,
+    Equation      varchar(100)               not null,
+    EquationValue numeric                    not null,
     CreatedAt     datetime default getdate() not null,
     Id            int identity,
     constraint CalculatorHistory_pk
-        primary key (SchoolId, UserId)
+        primary key (Id, SchoolId, UserId)
 )
 go
 ```

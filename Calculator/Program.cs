@@ -1,13 +1,22 @@
 using Calculator.DataAccess;
+using Calculator.Models.Configuration;
 
-var builder = WebApplication.CreateBuilder(args);
+WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
+builder.Configuration
+    .AddJsonFile("appsettings.json")
+#if DEBUG
+    .AddJsonFile("appsettings.Development.json")
+#endif
+    .Build();
 
+var config = builder.Configuration;
 // Add services to the container.
-
+builder.Services.Configure<CalculatorDataAccessOptions>(config.GetSection(nameof(CalculatorDataAccessOptions)));
 builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<CalculatorDataAccessor>();
 
-var app = builder.Build();
+WebApplication app = builder.Build();
+
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

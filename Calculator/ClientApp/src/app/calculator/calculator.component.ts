@@ -2,6 +2,7 @@ import {Component, Inject, OnInit} from '@angular/core';
 import { FormControl, FormGroup, Validators} from "@angular/forms";
 import {HttpClient} from "@angular/common/http";
 import {ensureEquationHasOnlyValidCharacters} from "./Validators/EquationFormatValidator";
+import { ActivatedRoute } from "@angular/router";
 
 @Component({
   selector: 'app-calculator',
@@ -17,6 +18,9 @@ export class CalculatorComponent implements OnInit {
   private baseUrl: string;
   private http: HttpClient;
 
+  private schoolId: string | null;
+  private userId: number;
+
 
   get equation() {
     return this.inputForm.controls['equation'];
@@ -24,19 +28,26 @@ export class CalculatorComponent implements OnInit {
 
 
 
-  constructor(http: HttpClient, @Inject('BASE_URL') baseUrl: string) {
+  constructor(http: HttpClient, @Inject('BASE_URL') baseUrl: string, private route: ActivatedRoute) {
     this.http = http;
     this.baseUrl = baseUrl;
+    console.log(JSON.stringify(this.route.snapshot.paramMap))
+    this.schoolId = this.route.snapshot.paramMap.get('schoolId');
+    const id = Number(this.route.snapshot.paramMap.get('userId'));
+    if (isNaN(id)) {
+      throw new Error("Route invalid, the userId could not be provided");
+    }
+    this.userId = id;
+
+    this.http.get<EquationDto[]>(this.baseUrl + `calculator?schoolId=${this.schoolId}&userId=${this.userId}`)
+      .subscribe(equations => {
+        equations.forEach(val => {
+          this.equationHistory.push(val)
+        })
+      });
   }
 
   ngOnInit(): void {
-    this.http.get<EquationDto[]>(this.baseUrl + 'calculator')
-      .subscribe(equations => {
-          equations.forEach(val => {
-            this.equationHistory.push(val)
-          })
-        })
-
     this.inputForm = new FormGroup({
       equation: new FormControl('', [
         ensureEquationHasOnlyValidCharacters()
@@ -48,11 +59,28 @@ export class CalculatorComponent implements OnInit {
     this.inputForm.setValue({
       equation: this.inputForm.value.equation.concat(value)
     })
-  }
+  };
 
   onSubmit(): void {
-    this.equationHistory.push({id: this.equationHistory.length, equation: this.inputForm.value.equation, mouseOn: false})
+    const event = {
+      localId: this.equationHistory.length,
+      equation: this.inputForm.value.equation,
+      equationValue: 0,
+      schoolId: "",
+      userId: 0,
+      mouseOn: false
+    };
+    // this.equationHistory.push(event);
     this.processEquationAndAssignToResult(this.inputForm.value.equation);
+    event.equationValue = this.equationResult;
+    event.schoolId = String(this.schoolId);
+    event.userId = this.userId;
+
+    this.http.post(this.baseUrl + 'calculator', event)
+      .subscribe(r => {
+        this.equationHistory.push(event)
+      });
+
     this.inputForm.reset()
   }
 
@@ -105,7 +133,11 @@ export class CalculatorComponent implements OnInit {
 }
 
 interface EquationDto {
-  id: number
+  localId: number
   equation: string
+  equationValue: number
+  schoolId: string
+  userId: number
+  // used to make table reactive
   mouseOn: boolean
 }

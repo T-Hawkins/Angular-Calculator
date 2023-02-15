@@ -11,7 +11,7 @@
             <tr *ngFor="let equation of equationHistory"
                 (mouseover)="handleMouseOver(equation)"
                 (mouseleave)="handleMouseLeave(equation)">
-              <td class="col-3">{{equation.id}}</td>
+              <td class="col-3">{{equation.localId}}</td>
               <td class="col-3">{{equation.equation}}</td>
               <td class="col-2">
                 <button [hidden]="!equation.mouseOn"
