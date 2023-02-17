@@ -49,6 +49,12 @@ public sealed class CalculatorDataAccessor : IDisposable, IAsyncDisposable
         return results.ToArray();
     }
 
+    /// <summary>
+    /// Adds a single entry to the database using provided event. This will throw an exception if
+    /// the updated query doesn't indicate it has updated a single row
+    /// </summary>
+    /// <param name="event"></param>
+    /// <exception cref="InvalidOperationException"></exception>
     public async Task AddAsync(CalculatorHistory @event)
     {
         Task<int> Query() =>
@@ -63,7 +69,7 @@ public sealed class CalculatorDataAccessor : IDisposable, IAsyncDisposable
 
         if (result != 1)
         {
-            throw new InvalidOperationException("Created more than one row with a singular insert query");
+            throw new InvalidOperationException("Failed to create a single row with the insert query");
         }
     }
 

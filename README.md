@@ -9,6 +9,7 @@ These typically explain the presence or absence of features:
   * It is assumed that there would already be an authentication mechanism for this to plug into
   * The provided school/user IDs will not be verified in terms of presence or whether the
     student is allowed in the school. All data will be stored as needed
+  * No data is encrypted, though would expect to be encrypted in transit (TLS) and at rest (DB)
 * Browser specification
   * It is assumed that only modern browsers are supported (the use of `E2021.string` 
     is an example of where some of the functionality will likely break in older browsers)
@@ -16,7 +17,10 @@ These typically explain the presence or absence of features:
   * Due to difficulties in getting Dapper to complete a 'code first' approach, there is an 
     expected table structure that will need to be created. This is referenced below
   * Connection managed through a connection string for simplicity
-  
+* Reasonably small numbers will be used
+  * It is not anticipated that users will require equations that result in values that 
+  exceed that stored within a `decimal` datatype
+
 ## Configuration
 There are several values required for configuration and the application will not start without
 some of them.
@@ -49,14 +53,38 @@ go
 
 create table calc.CalculatorHistory
 (
+    Id            int identity               not null,
     SchoolId      uniqueidentifier           not null,
     UserId        int                        not null,
     Equation      varchar(100)               not null,
     EquationValue numeric                    not null,
     CreatedAt     datetime default getdate() not null,
-    Id            int identity,
     constraint CalculatorHistory_pk
         primary key (Id, SchoolId, UserId)
 )
 go
 ```
+
+## Future Work
+In order to make this production ready the following should be completed:
+* Height limit and scrolling implemented on the table
+* Unit tests
+  * Updating the various specs to:
+    * Prevent user input
+    * Press a series of keys and ensure validity
+    * Various types of equation parsing
+  * Handle invalid input handling
+* Edge case handling
+  * Currently extremely large values can cause a storage error due to the DB model
+  * Similar with extremely small results
+* Break the form down into further components:
+  * The input buttons themselves could be a component with a provided argument instead
+    of so much repeated HTML 
+
+Further improvements to the application that would extend beyond the scope of
+the provided scope:
+* More complicated equation support
+  * Possibly update equation model to utilise a binary tree structure
+* Reactive entry field to represent equations
+* Allow equations starting/ending with an operator to assume use of the previous result
+* Add some first time tips/hints to allow the user to familiarize themselves

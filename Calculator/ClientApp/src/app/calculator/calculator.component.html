@@ -34,15 +34,17 @@
           </div>
         </div>
         <div class="row pb-4">
-          <form [formGroup]="inputForm" #equationInputForm="ngForm">
+          <form [formGroup]="inputForm" #equationInputForm="ngForm" >
             <div class="row">
               <div class="form-group col-7">
                 <label for="equationInput">Input</label>
                 <input class="form-control col-3"
+                       appCalculatorFilterDirective
                        type="text"
                        id="equationInput"
                        formControlName="equation"
                        name="equationInput"
+                       (keydown.enter)="enterSubmit()"
                        placeholder="Please enter equation"
                        required>
               </div>
@@ -60,34 +62,34 @@
             <div class="container pt-4">
               <h4>Calculator Input</h4>
               <div class="row">
-                <button class="btn btn-light btn-outline-secondary col-2" (click)="addValue('1')">1</button>
-                <button class="btn btn-light btn-outline-secondary col-2" (click)="addValue('2')">2</button>
-                <button class="btn btn-light btn-outline-secondary col-2" (click)="addValue('3')">3</button>
-                <button class="btn btn-light btn-outline-secondary col-2" (click)="addValue('*')">*</button>
+                <button type="button" class="btn btn-light btn-outline-secondary col-2" (click)="addValue('1')">1</button>
+                <button type="button" class="btn btn-light btn-outline-secondary col-2" (click)="addValue('2')">2</button>
+                <button type="button" class="btn btn-light btn-outline-secondary col-2" (click)="addValue('3')">3</button>
+                <button type="button" class="btn btn-light btn-outline-secondary col-2" (click)="addValue('*')">*</button>
               </div>
               <div class="row">
-                <button class="btn btn-light btn-outline-secondary col-2" (click)="addValue('4')">4</button>
-                <button class="btn btn-light btn-outline-secondary col-2" (click)="addValue('5')">5</button>
-                <button class="btn btn-light btn-outline-secondary col-2" (click)="addValue('6')">6</button>
-                <button class="btn btn-light btn-outline-secondary col-2" (click)="addValue('/')">/</button>
+                <button type="button" class="btn btn-light btn-outline-secondary col-2" (click)="addValue('4')">4</button>
+                <button type="button" class="btn btn-light btn-outline-secondary col-2" (click)="addValue('5')">5</button>
+                <button type="button" class="btn btn-light btn-outline-secondary col-2" (click)="addValue('6')">6</button>
+                <button type="button" class="btn btn-light btn-outline-secondary col-2" (click)="addValue('/')">/</button>
               </div>
               <div class="row">
-                <button class="btn btn-light btn-outline-secondary col-2" (click)="addValue('7')">7</button>
-                <button class="btn btn-light btn-outline-secondary col-2" (click)="addValue('8')">8</button>
-                <button class="btn btn-light btn-outline-secondary col-2" (click)="addValue('9')">9</button>
-                <button class="btn btn-light btn-outline-secondary col-2" (click)="addValue('+')">+</button>
+                <button type="button" class="btn btn-light btn-outline-secondary col-2" (click)="addValue('7')">7</button>
+                <button type="button" class="btn btn-light btn-outline-secondary col-2" (click)="addValue('8')">8</button>
+                <button type="button" class="btn btn-light btn-outline-secondary col-2" (click)="addValue('9')">9</button>
+                <button type="button" class="btn btn-light btn-outline-secondary col-2" (click)="addValue('+')">+</button>
               </div>
               <div class="row">
-                <button class="btn btn-light btn-outline-secondary col-2 offset-2" (click)="addValue('0')">0</button>
-                <button class="btn btn-light btn-outline-secondary col-2" (click)="addValue('.')">.</button>
-                <button class="btn btn-light btn-outline-secondary col-2" (click)="addValue('-')">-</button>
+                <button type="button" class="btn btn-light btn-outline-secondary col-2 offset-2" (click)="addValue('0')">0</button>
+                <button type="button" class="btn btn-light btn-outline-secondary col-2" (click)="addValue('.')">.</button>
+                <button type="button" class="btn btn-light btn-outline-secondary col-2" (click)="addValue('-')">-</button>
               </div>
             </div>
             <div class="row pt-5">
               <button type="submit"
                       class="btn btn-primary col-2"
                       [disabled]="inputForm.invalid"
-                      (click)="onSubmit(); equationInputForm.resetForm({equation: ''})">Submit</button>
+                      (click)="onSubmit()">Submit</button>
               <button type="button" class="btn btn-warning col-2 offset-2"
                       (click)="removeLastCharacter()">Delete</button>
               <button type="button" class="btn btn-danger col-2"
