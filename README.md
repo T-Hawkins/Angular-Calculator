@@ -17,6 +17,11 @@ These typically explain the presence or absence of features:
   * Due to difficulties in getting Dapper to complete a 'code first' approach, there is an 
     expected table structure that will need to be created. This is referenced below
   * Connection managed through a connection string for simplicity
+  * Database latency will be low - the DB access has been made synchronous for simplicity with the
+    assumption of a local DB. Adjusting some code to be more asynchronous may be appropriate. Ie. 
+    Allow the browse to update to UI locally and send requests off to store in the DB. It is possible
+    though unlikely that in those instances data desynchronisation can happen and needs to be accounted
+    for
 * Reasonably small numbers will be used
   * It is not anticipated that users will require equations that result in values that 
   exceed that stored within a `decimal` datatype
@@ -80,6 +85,9 @@ In order to make this production ready the following should be completed:
 * Break the form down into further components:
   * The input buttons themselves could be a component with a provided argument instead
     of so much repeated HTML 
+* Back-end validation for the equation models. Currently, although it is within the Javascript
+  someone could submit non-valid equations and these would not be validated as a real equation
+  before submission
 
 Further improvements to the application that would extend beyond the scope of
 the provided scope:
@@ -88,3 +96,5 @@ the provided scope:
 * Reactive entry field to represent equations
 * Allow equations starting/ending with an operator to assume use of the previous result
 * Add some first time tips/hints to allow the user to familiarize themselves
+* Show historic results as well (this was omitted as the brief wanted a resubmission
+  and showing the results outright kind of rendered that redundant)
